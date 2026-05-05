@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freight Demand Forecasting System</title>
+    <style>
+        /* ==========================================================================
+           Freight Demand Forecasting System — Modern UI Stylesheet
+           ========================================================================== */
+
+        /* --- Reset & Base --- */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1a237e;
+            --primary-light: #3949ab;
+            --accent: #ff6f00;
+            --accent-light: #ffa726;
+            --success: #2e7d32;
+            --danger: #c62828;
+            --bg-gradient-1: #0f0c29;
+            --bg-gradient-2: #302b63;
+            --bg-gradient-3: #24243e;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --text-dark: #212121;
+            --text-muted: #616161;
+            --border-light: #e0e0e0;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%,
+                        var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- Header --- */
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            color: #ffffff;
+        }
+
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+            margin-bottom: 8px;
+        }
+
+        .header h1 .icon {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .header p {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 300;
+        }
+
+        .model-badge {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 6px 18px;
+            background: rgba(255, 111, 0, 0.85);
+            color: #fff;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 0 20px 40px;
+        }
+
+        /* --- Card --- */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--card-shadow);
+            padding: 35px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .emoji {
+            font-size: 1.5rem;
+        }
+
+        /* --- Form Grid --- */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 16px;
+            border: 2px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 1rem;
+            color: var(--text-dark);
+            background: #fafafa;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(57, 73, 171, 0.15);
+            background: #ffffff;
+        }
+
+        .form-group input::placeholder {
+            color: #bdbdbd;
+        }
+
+        /* --- Section Dividers --- */
+        .section-label {
+            grid-column: 1 / -1;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            padding: 8px 0 4px;
+            border-bottom: 1px dashed var(--border-light);
+            margin-top: 5px;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 36px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #ffffff;
+            box-shadow: 0 6px 20px rgba(26, 35, 126, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.45);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+            color: var(--text-dark);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* --- Loading Spinner --- */
+        .spinner {
+            display: none;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading .spinner {
+            display: inline-block;
+        }
+
+        /* --- Result Panel --- */
+        .result-panel {
+            display: none;
+            margin-top: 25px;
+            padding: 30px;
+            border-radius: var(--radius);
+            text-align: center;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-panel.success {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border: 2px solid #66bb6a;
+        }
+
+        .result-panel.error {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            border: 2px solid #ef5350;
+        }
+
+        .result-prediction {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--success);
+            margin: 10px 0;
+            line-height: 1.2;
+        }
+
+        .result-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .result-range {
+            font-size: 1.1rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .result-model {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .result-error {
+            font-size: 1.1rem;
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        /* --- Visualization Gallery --- */
+        .viz-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+            gap: 25px;
+        }
+
+        .viz-item {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .viz-item:hover {
+            transform: translateY(-4px);
+        }
+
+        .viz-item img {
+            width: 100%;
+            display: block;
+            background: #fff;
+        }
+
+        .viz-item canvas {
+            width: 100% !important;
+            height: 320px !important;
+            display: block;
+            background: #fff;
+        }
+
+        .viz-caption {
+            padding: 10px 15px;
+            background: #f5f5f5;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* --- Footer --- */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.7rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .viz-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .btn {
+                padding: 12px 28px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+    <h1><span class="icon">&#128666;</span> Freight Demand Forecasting</h1>
+    <p>Predict logistics order volume using machine learning</p>
+    <span class="model-badge">Active Model: {{ model_name or 'Not Loaded' }}</span>
+</header>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<div class="container">
+
+    <!-- ===== PREDICTION FORM CARD ===== -->
+    <div class="card">
+        <div class="card-title">
+            <span class="emoji">&#128200;</span>
+            Input Features
+        </div>
+
+        <form id="predictionForm">
+            <div class="form-grid">
+
+                <!-- -- Operational Features -- -->
+                <div class="section-label">&#128230; Operational Metrics</div>
+
+                <div class="form-group">
+                    <label for="delivery_count">Delivery Count</label>
+                    <input type="number" id="delivery_count" name="delivery_count"
+                           placeholder="e.g. 400" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="inventory_level">Inventory Level</label>
+                    <input type="number" id="inventory_level" name="inventory_level"
+                           placeholder="e.g. 15000" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lead_time_avg">Avg Lead Time (days)</label>
+                    <input type="number" id="lead_time_avg" name="lead_time_avg"
+                           placeholder="e.g. 2.5" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="warehouse_utilization">Warehouse Utilization</label>
+                    <input type="number" id="warehouse_utilization" name="warehouse_utilization"
+                           placeholder="e.g. 0.65" step="any" min="0" max="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="vehicle_availability">Vehicle Availability</label>
+                    <input type="number" id="vehicle_availability" name="vehicle_availability"
+                           placeholder="e.g. 30" step="any" required>
+                </div>
+
+                <!-- -- Economic & Environmental -- -->
+                <div class="section-label">&#127760; Economic &amp; Environmental</div>
+
+                <div class="form-group">
+                    <label for="fuel_price_index">Fuel Price Index</label>
+                    <input type="number" id="fuel_price_index" name="fuel_price_index"
+                           placeholder="e.g. 85.0" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="economic_index">Economic Index</label>
+                    <input type="number" id="economic_index" name="economic_index"
+                           placeholder="e.g. 65.5" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="temperature">Temperature (&#8451;)</label>
+                    <input type="number" id="temperature" name="temperature"
+                           placeholder="e.g. 22.0" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="rainfall_mm">Rainfall (mm)</label>
+                    <input type="number" id="rainfall_mm" name="rainfall_mm"
+                           placeholder="e.g. 3.0" step="any" required>
+                </div>
+
+                <!-- -- Flags -- -->
+                <div class="section-label">&#127880; Flags</div>
+
+                <div class="form-group">
+                    <label for="holiday_flag">Holiday Flag</label>
+                    <select id="holiday_flag" name="holiday_flag">
+                        <option value="0">No (0)</option>
+                        <option value="1">Yes (1)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="promo_flag">Promotion Flag</label>
+                    <select id="promo_flag" name="promo_flag">
+                        <option value="0">No (0)</option>
+                        <option value="1">Yes (1)</option>
+                    </select>
+                </div>
+
+                <!-- -- Lag Features -- -->
+                <div class="section-label">&#128197; Historical Lag Features</div>
+
+                <div class="form-group">
+                    <label for="lag_1_order">Lag 1-Day Orders</label>
+                    <input type="number" id="lag_1_order" name="lag_1_order"
+                           placeholder="e.g. 420" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lag_7_order">Lag 7-Day Orders</label>
+                    <input type="number" id="lag_7_order" name="lag_7_order"
+                           placeholder="e.g. 410" step="any" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="lag_30_order">Lag 30-Day Orders</label>
+                    <input type="number" id="lag_30_order" name="lag_30_order"
+                           placeholder="e.g. 395" step="any" required>
+                </div>
+
+                <!-- -- Date Features -- -->
+                <div class="section-label">&#128197; Date Features</div>
+
+                <div class="form-group">
+                    <label for="day">Day of Month</label>
+                    <input type="number" id="day" name="day"
+                           placeholder="1-31" min="1" max="31" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="month">Month</label>
+                    <input type="number" id="month" name="month"
+                           placeholder="1-12" min="1" max="12" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="year">Year</label>
+                    <input type="number" id="year" name="year"
+                           placeholder="e.g. 2025" min="2020" max="2030" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="day_of_week">Day of Week (0=Mon, 6=Sun)</label>
+                    <input type="number" id="day_of_week" name="day_of_week"
+                           placeholder="0-6" min="0" max="6" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="is_weekend">Is Weekend</label>
+                    <select id="is_weekend" name="is_weekend">
+                        <option value="0">No (0)</option>
+                        <option value="1">Yes (1)</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary" id="predictBtn">
+                    <span class="spinner" id="spinner"></span>
+                    <span id="btnText">&#128640; Predict Demand</span>
+                </button>
+                <button type="button" class="btn btn-secondary" id="resetBtn">
+                    &#128260; Reset
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Display -->
+        <div class="result-panel" id="resultPanel">
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <!-- ===== VISUALIZATIONS CARD ===== -->
+    {% if viz_images %}
+    <div class="card">
+        <div class="card-title">
+            <span class="emoji">&#128202;</span>
+            Model Visualizations
+        </div>
+
+        <div class="viz-gallery">
+            {% if viz_images.actual_vs_predicted %}
+            <div class="viz-item">
+                <canvas id="actualPredChart"></canvas>
+                <div class="viz-caption">Actual vs Predicted Values</div>
+            </div>
+            {% endif %}
+
+            {% if viz_images.prediction_timeline %}
+            <div class="viz-item">
+                <canvas id="predictionTimelineChart"></canvas>
+                <div class="viz-caption">Prediction Timeline</div>
+            </div>
+            {% endif %}
+
+            {% if viz_images.feature_importance %}
+            <div class="viz-item">
+                <canvas id="featureImportanceChart"></canvas>
+                <div class="viz-caption">Random Forest Feature Importance</div>
+            </div>
+            {% endif %}
+
+            {% if viz_images.model_comparison %}
+            <div class="viz-item">
+                <canvas id="modelComparisonChart"></canvas>
+                <div class="viz-caption">Model Performance Comparison</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<div class="footer">
+    Freight Demand Forecasting System &mdash; Built with Python, Scikit-Learn &amp; Flask
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const form = document.getElementById('predictionForm');
+    const predictBtn = document.getElementById('predictBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+    const resultPanel = document.getElementById('resultPanel');
+    const resultContent = document.getElementById('resultContent');
+
+    const actualPredCtx = document.getElementById('actualPredChart');
+    const predictionTimelineCtx = document.getElementById('predictionTimelineChart');
+    const featureImportanceCtx = document.getElementById('featureImportanceChart');
+    const modelComparisonCtx = document.getElementById('modelComparisonChart');
+
+    function buildChartConfig(type, data, options) {
+        return {
+            type,
+            data,
+            options: Object.assign({
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#374151' }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#374151' } },
+                    y: { ticks: { color: '#374151' } }
+                }
+            }, options || {})
+        };
+    }
+
+    const actualPredChart = actualPredCtx ? new Chart(actualPredCtx.getContext('2d'), buildChartConfig('line', {
+        labels: Array.from({ length: 10 }, (_, i) => `T${i + 1}`),
+        datasets: [
+            {
+                label: 'Actual',
+                data: [],
+                backgroundColor: 'rgba(56, 161, 105, 0.35)',
+                borderColor: 'rgba(56, 161, 105, 0.85)',
+                fill: true,
+                tension: 0.35,
+                pointRadius: 4
+            },
+            {
+                label: 'Predicted',
+                data: [],
+                backgroundColor: 'rgba(29, 78, 216, 0.15)',
+                borderColor: 'rgba(29, 78, 216, 0.95)',
+                fill: false,
+                tension: 0.35,
+                pointRadius: 3
+            }
+        ]
+    }, { scales: { x: { title: { display: true, text: 'Sample' } }, y: { title: { display: true, text: 'Orders' } } } })) : null;
+
+    const predictionTimelineChart = predictionTimelineCtx ? new Chart(predictionTimelineCtx.getContext('2d'), buildChartConfig('line', {
+        labels: Array.from({ length: 10 }, (_, i) => `Day ${i + 1}`),
+        datasets: [
+            {
+                label: 'Prediction Timeline',
+                data: [],
+                backgroundColor: 'rgba(99, 102, 241, 0.25)',
+                borderColor: 'rgba(79, 70, 229, 0.95)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 3
+            }
+        ]
+    }, { scales: { x: { title: { display: true, text: 'Period' } }, y: { title: { display: true, text: 'Orders' } } } })) : null;
+
+    const featureImportanceChart = featureImportanceCtx ? new Chart(featureImportanceCtx.getContext('2d'), buildChartConfig('bar', {
+        labels: [],
+        datasets: [
+            {
+                label: 'Importance',
+                data: [],
+                backgroundColor: 'rgba(251, 146, 60, 0.85)',
+                borderColor: 'rgba(249, 115, 22, 1)',
+                borderWidth: 1,
+                borderRadius: 10,
+                maxBarThickness: 36
+            }
+        ]
+    }, {
+        indexAxis: 'y',
+        scales: { x: { beginAtZero: true }, y: { ticks: { autoSkip: false } } }
+    })) : null;
+
+    const modelComparisonChart = modelComparisonCtx ? new Chart(modelComparisonCtx.getContext('2d'), buildChartConfig('bar', {
+        labels: ['MAE', 'RMSE'],
+        datasets: [
+            {
+                label: 'Model Metrics',
+                data: [0, 0],
+                backgroundColor: ['rgba(16, 185, 129, 0.9)', 'rgba(14, 165, 233, 0.9)'],
+                borderColor: ['rgba(5, 150, 105, 1)', 'rgba(3, 169, 244, 1)'],
+                borderWidth: 1,
+                borderRadius: 10,
+                maxBarThickness: 48
+            }
+        ]
+    }, { scales: { y: { beginAtZero: true } } })) : null;
+
+    function updateCharts(data) {
+        if (actualPredChart) {
+            actualPredChart.data.labels = data.actual.map((_, idx) => `T${idx + 1}`);
+            actualPredChart.data.datasets[0].data = data.actual;
+            actualPredChart.data.datasets[1].data = data.predicted;
+            actualPredChart.update();
+        }
+
+        if (predictionTimelineChart) {
+            predictionTimelineChart.data.labels = data.predicted.map((_, idx) => `Day ${idx + 1}`);
+            predictionTimelineChart.data.datasets[0].data = data.predicted;
+            predictionTimelineChart.update();
+        }
+
+        if (featureImportanceChart) {
+            featureImportanceChart.data.labels = Object.keys(data.feature_importance);
+            featureImportanceChart.data.datasets[0].data = Object.values(data.feature_importance);
+            featureImportanceChart.update();
+        }
+
+        if (modelComparisonChart) {
+            modelComparisonChart.data.datasets[0].data = [data.metrics.mae, data.metrics.rmse];
+            modelComparisonChart.update();
+        }
+    }
+
+    async function fetchChartData(formData) {
+        const response = await fetch('/get_chart_data', {
+            method: 'POST',
+            body: formData
+        });
+        return response.json();
+    }
+
+    // --- Handle Form Submission ---
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        predictBtn.classList.add('loading');
+        predictBtn.disabled = true;
+        btnText.textContent = 'Analyzing...';
+        resultPanel.style.display = 'none';
+
+        try {
+            const formDataForPredict = new FormData(form);
+            const formDataForChart = new FormData(form);
+            const [predictResponse, chartResponse] = await Promise.all([
+                fetch('/predict', { method: 'POST', body: formDataForPredict }).then(res => res.json()),
+                fetchChartData(formDataForChart)
+            ]);
+
+            if (predictResponse.success) {
+                resultPanel.className = 'result-panel success';
+                resultContent.innerHTML = `
+                    <div class="result-label">PREDICTED FREIGHT DEMAND</div>
+                    <div class="result-prediction">${predictResponse.prediction.toLocaleString()} <span style="font-size:1.2rem;">orders</span></div>
+                    <div class="result-range">&#128202; Estimated Range: ${predictResponse.lower_bound.toLocaleString()} &mdash; ${predictResponse.upper_bound.toLocaleString()} orders</div>
+                    <div class="result-model">
+                        Model: ${predictResponse.model_used} &nbsp;|&nbsp;
+                        Raw Score: ${predictResponse.raw_prediction}
+                    </div>
+                `;
+            } else {
+                throw new Error(predictResponse.error || 'Prediction request failed');
+            }
+
+            if (chartResponse.success) {
+                updateCharts(chartResponse);
+            } else {
+                console.warn('Chart data failed:', chartResponse.error);
+            }
+
+            resultPanel.style.display = 'block';
+
+        } catch (error) {
+            resultPanel.className = 'result-panel error';
+            resultContent.innerHTML = `
+                <div class="result-error">&#9888; ${error.message || 'Network error. Please try again.'}</div>
+            `;
+            resultPanel.style.display = 'block';
+        } finally {
+            predictBtn.classList.remove('loading');
+            predictBtn.disabled = false;
+            btnText.innerHTML = '&#128640; Predict Demand';
+        }
+    });
+
+    resetBtn.addEventListener('click', function() {
+        form.reset();
+        resultPanel.style.display = 'none';
+    });
+</script>
+
+</body>
+</html>
